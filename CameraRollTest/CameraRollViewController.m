@@ -7,11 +7,15 @@
 {
     NSMutableArray *framesArray;
 }
+
+@property (nonatomic, retain) NSArray *scrollViewThumbnailViews;
+@property (nonatomic, retain) UIBarButtonItem* backItem;
+
 @end
 
 @implementation CameraRollViewController
 
-@synthesize assets, scrollView, navBar;
+@synthesize assets, scrollView, navBar, scrollViewThumbnailViews, backItem;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -20,6 +24,7 @@
     if (self) {
         assets = [NSMutableArray new];
         framesArray = [NSMutableArray new];
+        scrollViewThumbnailViews = [NSArray new];
     }
     return self;
 }
@@ -37,10 +42,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(goBack:)];
 
-
-    //[backButton setImage:[UIImage imageNamed:@"icon_back.png"]];
+    backItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_back.png"] style:UIBarButtonItemStylePlain target:nil action:@selector(goBack:)];
+                                
+    UINavigationItem *item = [[UINavigationItem alloc] initWithTitle:@"Camera Roll"];
+    item.leftBarButtonItem = backItem;
+    [self.navBar pushNavigationItem:item animated:NO];
     
     UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)]; 
     singleFingerTap.numberOfTapsRequired = 1;
@@ -51,14 +58,8 @@
     singleNavBarTap.delegate = self;
     [self.navBar addGestureRecognizer:singleNavBarTap];
     
+    [self loadAssets]; 
     
-    [self loadAssets];
-    
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-{
-    return YES;
 }
 
 - (void)viewDidUnload
@@ -68,6 +69,8 @@
     self.assets = nil;
     self.scrollView = nil;
     self.navBar = nil;
+    self.scrollViewThumbnailViews = nil;
+    self.backItem = nil;
 }
 
 -(void)addAsset:(id)anAsset {
@@ -154,6 +157,8 @@
         }
     }
     
+    self.scrollViewThumbnailViews = [scrollView.subviews copy]; // save thumbnails views only array for further use
+    
     int rows_num = kNumOfPictures / kPictsPerRow;
     int rest = fmod(kNumOfPictures, kPictsPerRow);
     int contentSizeY;
@@ -164,7 +169,14 @@
         contentSizeY = yInc * rows_num;
     }
     
-    scrollView.contentSize = CGSizeMake(xInc * kPictsPerRow, contentSizeY);
+    // Add info labal at the bottom of the scroll view
+    UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, contentSizeY, 480, 40)];
+    [infoLabel setText:[NSString stringWithFormat:@"Video files: %i, Total duration: %@", [assets count], [self getTotalDurationStringFromAssetsArray:assets]]];
+    [infoLabel setTextAlignment:UITextAlignmentCenter];
+    [infoLabel setTextColor:[UIColor grayColor]];
+    [scrollView addSubview:infoLabel];
+    
+    scrollView.contentSize = CGSizeMake(xInc * kPictsPerRow, contentSizeY + infoLabel.frame.size.height);
 }
 
 - (NSString*)getDurationStringFromAsset:(ALAsset*)anAsset
@@ -183,7 +195,29 @@
     NSString *durationString = [self convertToTimerString:(int)seconds];
     
     return durationString;
+}
 
+- (NSString*)getTotalDurationStringFromAssetsArray:(NSArray*)assetsArray
+{
+    float seconds = 0;
+    
+    for (ALAsset *anAsset in assetsArray) {
+        //Get the URL location of the video
+        ALAssetRepresentation *representation = [anAsset defaultRepresentation];
+        NSURL *url = [representation url];
+        
+        //Create an AVAsset from the given URL
+        NSDictionary *asset_options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
+        AVAsset *avAsset = [[AVURLAsset alloc] initWithURL:url options:asset_options];
+        //[AVURLAsset URLAssetWithURL:url options:asset_options];
+        
+        CMTime duration = avAsset.duration;
+        seconds += CMTimeGetSeconds(duration);
+    }
+    
+    NSString *totalDurationString = [self convertToTimerString:(int)seconds];
+    
+    return totalDurationString;
 }
 
 #pragma mark - MPMoviePlayer
@@ -243,7 +277,10 @@
     ALAsset *asset = [self.assets objectAtIndex:i];
     NSURL *url = asset.defaultRepresentation.url;
     
-    UIView *selectedThumbnail = [self.scrollView.subviews objectAtIndex:self.assets.count - i - 1];
+    
+    NSArray *reversedThumbnailsViewsArray = [[self.scrollViewThumbnailViews reverseObjectEnumerator] allObjects];
+    
+    UIView *selectedThumbnail = [reversedThumbnailsViewsArray objectAtIndex:i];
     [UIView animateWithDuration:0.3 animations:^{
         [selectedThumbnail.layer setBorderColor:[UIColor blueColor].CGColor];
         [selectedThumbnail.layer setBorderWidth:3.0];
@@ -256,7 +293,7 @@
 
 - (void)handleNavBarTap:(UIGestureRecognizer *)recognizer
 {
-    NSLog(@"NavBar tapped");
+    [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
 }
 
 - (IBAction)goBack:(id)sender
@@ -268,6 +305,17 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    CGPoint touchedPoint = [touch locationInView:self.navBar];
+    
+    if (touchedPoint.x < 40) { // 40 represents back button width
+        [self goBack:self];
+    }
+
+    return YES;
 }
 
 - (NSString*)convertToTimerString:(int)timeInSeconds

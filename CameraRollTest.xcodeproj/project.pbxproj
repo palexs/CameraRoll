@@ -25,7 +25,6 @@
 		80EB3F5A156CCE2B003B0190 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EB3F59156CCE2B003B0190 /* AssetsLibrary.framework */; };
 		80EB3F5C156CD029003B0190 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80EB3F5B156CD029003B0190 /* MediaPlayer.framework */; };
 		80EB3F66156CD1D8003B0190 /* icon_back.png in Resources */ = {isa = PBXBuildFile; fileRef = 80EB3F65156CD1D8003B0190 /* icon_back.png */; };
-		80EB3F75156CE218003B0190 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 80EB3F74156CE218003B0190 /* star.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +35,7 @@
 		8066F20E156CF32400F90A35 /* UIImage+Alpha.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+Alpha.h"; sourceTree = "<group>"; };
 		8066F20F156CF32400F90A35 /* UIImage+Alpha.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Alpha.m"; sourceTree = "<group>"; };
 		8066F22F156D325C00F90A35 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		80DA89B4156E232A00AF8E37 /* backbutton.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = backbutton.psd; sourceTree = "<group>"; };
 		80EB3F31156CCCF2003B0190 /* CameraRollTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraRollTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80EB3F35156CCCF2003B0190 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		80EB3F37156CCCF2003B0190 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -56,7 +56,6 @@
 		80EB3F59156CCE2B003B0190 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		80EB3F5B156CD029003B0190 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		80EB3F65156CD1D8003B0190 /* icon_back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_back.png; sourceTree = "<group>"; };
-		80EB3F74156CE218003B0190 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,7 +145,7 @@
 				80EB3F41156CCCF2003B0190 /* main.m */,
 				80EB3F43156CCCF2003B0190 /* CameraRollTest-Prefix.pch */,
 				80EB3F65156CD1D8003B0190 /* icon_back.png */,
-				80EB3F74156CE218003B0190 /* star.png */,
+				80DA89B4156E232A00AF8E37 /* backbutton.psd */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -205,7 +204,6 @@
 				80EB3F4C156CCCF2003B0190 /* ViewController.xib in Resources */,
 				80EB3F58156CCDF7003B0190 /* CameraRollViewController.xib in Resources */,
 				80EB3F66156CD1D8003B0190 /* icon_back.png in Resources */,
-				80EB3F75156CE218003B0190 /* star.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
